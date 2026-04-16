@@ -4,20 +4,24 @@ struct SpringEffectView: View {
     @ObservedObject var viewModel: PhysicsViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Label("Spring Effect", systemImage: "spring.brakesystem")
                 .font(.headline)
 
             ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 20)
+                Capsule()
+                    .fill(Color(.systemGray4))
+                    .frame(height: 6)
+
+                Capsule()
                     .fill(
                         LinearGradient(
-                            colors: [.purple.opacity(0.3), .pink.opacity(0.3)],
+                            colors: [.purple, .purple.opacity(0.4)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .frame(height: 8)
+                    .frame(width: max(0, viewModel.springOffset + 20), height: 6)
 
                 Circle()
                     .fill(
@@ -25,17 +29,18 @@ struct SpringEffectView: View {
                             gradient: Gradient(colors: [.pink, .purple]),
                             center: .center,
                             startRadius: 2,
-                            endRadius: 20
+                            endRadius: 18
                         )
                     )
-                    .frame(width: 40, height: 40)
+                    .frame(width: 36, height: 36)
+                    .shadow(color: .purple.opacity(0.3), radius: 4, y: 2)
                     .offset(x: viewModel.springOffset)
             }
-            .frame(height: 40)
+            .padding(.vertical, 4)
             .gesture(
                 DragGesture()
                     .onChanged { value in
-                        let newX = max(0, value.location.x - 20)
+                        let newX = max(0, value.location.x - 18)
                         viewModel.springOffset = newX
                     }
             )
@@ -47,19 +52,25 @@ struct SpringEffectView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 12)
                     .background(
                         LinearGradient(
-                            colors: [.purple, .pink],
+                            colors: [.purple, .purple.opacity(0.7)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(20)
+                    .cornerRadius(25)
             }
             .frame(maxWidth: .infinity, alignment: .center)
         }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+        )
         .padding(.horizontal)
     }
 }
