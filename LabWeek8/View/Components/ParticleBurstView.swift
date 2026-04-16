@@ -11,20 +11,25 @@ struct ParticleBurstView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(.systemGray6))
-                    .frame(height: 200)
+                    .frame(height: 250)
 
                 GeometryReader { geo in
                     ForEach(viewModel.particles) { particle in
                         ParticleView(particle: particle)
                     }
+                    .onAppear {
+                        viewModel.particleAreaSize = geo.size
+                    }
+                    .onChange(of: geo.size) { _, newSize in
+                        viewModel.particleAreaSize = newSize
+                    }
                 }
-                .frame(height: 200)
+                .frame(height: 250)
                 .clipped()
             }
 
             Button(action: {
-                let screenSize = UIScreen.main.bounds.size
-                viewModel.burstParticles(screenSize: CGSize(width: screenSize.width - 40, height: 200))
+                viewModel.burstParticles()
             }) {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")

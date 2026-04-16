@@ -10,6 +10,9 @@ class PhysicsViewModel: ObservableObject {
     @Published var morphProgress: Double = 0.0
     @Published var isFlipped: Bool = false
 
+    var springTrackWidth: CGFloat = 300
+    var particleAreaSize: CGSize = CGSize(width: 300, height: 250)
+
     private let gridColors: [[Color]] = [
         [.red, .orange, .yellow],
         [.green, .cyan, .blue],
@@ -31,32 +34,36 @@ class PhysicsViewModel: ObservableObject {
     }
 
     func launchSpring() {
-        withAnimation(.linear(duration: 0.1)) {
-            springOffset = 150
+        withAnimation(.linear(duration: 0.15)) {
+            springOffset = 1.0
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.interpolatingSpring(stiffness: 50, damping: 5, initialVelocity: 10)) {
-                self.springOffset = 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            withAnimation(.interpolatingSpring(stiffness: 40, damping: 5, initialVelocity: 8)) {
+                self.springOffset = 0.0
             }
         }
     }
 
-    func burstParticles(screenSize: CGSize) {
-        let colors: [Color] = [.red, .blue, .green, .yellow, .purple, .orange, .pink, .teal]
+    func burstParticles() {
+        let colors: [Color] = [.red, .blue, .green, .yellow, .purple, .orange, .pink, .teal, .cyan, .mint]
+        let w = particleAreaSize.width
+        let h = particleAreaSize.height
 
         for _ in 0..<15 {
-            let randX = CGFloat.random(in: 40...(screenSize.width - 40))
-            let randY = CGFloat.random(in: 40...(screenSize.height - 150))
-            let randSize = CGFloat.random(in: 10...30)
+            let randX = CGFloat.random(in: 15...(w - 15))
+            let randY = CGFloat.random(in: 15...(h - 15))
+            let randSize = CGFloat.random(in: 8...35)
             let randColor = colors.randomElement() ?? .red
 
             let particle = Particle(x: randX, y: randY, size: randSize, color: randColor)
             particles.append(particle)
 
             let id = particle.id
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                if let index = self.particles.firstIndex(where: { $0.id == id }) {
-                    self.particles.remove(at: index)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    if let index = self.particles.firstIndex(where: { $0.id == id }) {
+                        self.particles.remove(at: index)
+                    }
                 }
             }
         }

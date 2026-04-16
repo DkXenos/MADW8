@@ -5,26 +5,44 @@ struct SpringEffectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Spring Effect", systemImage: "wand.and.stars")
+            Label("Spring Effect", systemImage: "spring.brakesystem")
                 .font(.headline)
 
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemGray6))
-                    .frame(height: 120)
+            GeometryReader { geo in
+                let trackWidth = geo.size.width
+                let ballSize: CGFloat = 40
+                let maxOffset = trackWidth - ballSize
 
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [.pink, .purple]),
-                            center: .center,
-                            startRadius: 2,
-                            endRadius: 20
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(
+                            LinearGradient(
+                                colors: [.purple.opacity(0.3), .pink.opacity(0.3)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                    )
-                    .frame(width: 40, height: 40)
-                    .offset(y: viewModel.springOffset)
+                        .frame(height: 8)
+                        .padding(.horizontal, ballSize / 2)
+
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                gradient: Gradient(colors: [.pink, .purple]),
+                                center: .center,
+                                startRadius: 2,
+                                endRadius: 20
+                            )
+                        )
+                        .frame(width: ballSize, height: ballSize)
+                        .offset(x: viewModel.springOffset * maxOffset)
+                }
+                .frame(height: ballSize)
+                .onAppear {
+                    viewModel.springTrackWidth = maxOffset
+                }
             }
+            .frame(height: 40)
 
             Button(action: {
                 viewModel.launchSpring()
