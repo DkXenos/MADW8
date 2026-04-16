@@ -8,41 +8,37 @@ struct SpringEffectView: View {
             Label("Spring Effect", systemImage: "spring.brakesystem")
                 .font(.headline)
 
-            GeometryReader { geo in
-                let trackWidth = geo.size.width
-                let ballSize: CGFloat = 40
-                let maxOffset = trackWidth - ballSize
-
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(
-                            LinearGradient(
-                                colors: [.purple.opacity(0.3), .pink.opacity(0.3)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        LinearGradient(
+                            colors: [.purple.opacity(0.3), .pink.opacity(0.3)],
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
-                        .frame(height: 8)
-                        .padding(.horizontal, ballSize / 2)
+                    )
+                    .frame(height: 8)
 
-                    Circle()
-                        .fill(
-                            RadialGradient(
-                                gradient: Gradient(colors: [.pink, .purple]),
-                                center: .center,
-                                startRadius: 2,
-                                endRadius: 20
-                            )
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            gradient: Gradient(colors: [.pink, .purple]),
+                            center: .center,
+                            startRadius: 2,
+                            endRadius: 20
                         )
-                        .frame(width: ballSize, height: ballSize)
-                        .offset(x: viewModel.springOffset * maxOffset)
-                }
-                .frame(height: ballSize)
-                .onAppear {
-                    viewModel.springTrackWidth = maxOffset
-                }
+                    )
+                    .frame(width: 40, height: 40)
+                    .offset(x: viewModel.springOffset)
             }
             .frame(height: 40)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        let newX = max(0, value.location.x - 20)
+                        viewModel.springOffset = newX
+                    }
+            )
 
             Button(action: {
                 viewModel.launchSpring()

@@ -3,8 +3,10 @@ import SwiftUI
 
 struct Particle: Identifiable {
     let id = UUID()
-    let x: CGFloat
-    let y: CGFloat
+    var x: CGFloat
+    var y: CGFloat
+    let targetX: CGFloat
+    let targetY: CGFloat
     let size: CGFloat
     let color: Color
 }
